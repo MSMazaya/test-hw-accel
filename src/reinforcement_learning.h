@@ -3,7 +3,7 @@
 #include "action.h"
 #include "accelerator_bsp.h"
 #define n_episode 1000
-#define use_accelerator true
+// #define use_accelerator true
 
 void saveQTableHistory(int episode);
 int getBestAction(int row, int col);
@@ -12,3 +12,4 @@ float getNextMaxQ(int row, int col, int act);
 void updateQ(int row, int col, int act);
 void train();
 void lookResult();
+void printQTable();

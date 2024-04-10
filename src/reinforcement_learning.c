@@ -1,7 +1,10 @@
 #include "reinforcement_learning.h"
 #include "accelerator_bsp.h"
+#include "action.h"
 #include "ee_printf.h"
 #include "maze.h"
+#include "utils.h"
+#include "timer_bsp.h"
 
 float cumulative_rewards[n_episode];
 extern int desired_row, desired_col;
@@ -73,12 +76,27 @@ void updateQ(int row, int col, int act) {
   int temp_row = row, temp_col = col;
   getIndexFromAction(&temp_row, &temp_col, act);
   setNextState(get_offset(temp_row, temp_col, act));
-  qUpdate(get_offset(row, col, act), getReward(row, col, act));
+
+  // somehow this fixes things (dead emoji)
+  load(get_offset(temp_row, temp_col, 0));
+  float res = qUpdate(get_offset(row, col, act), getReward(row, col, act));
+  // somehow this fixes things (dead emoji)
+  q_table[row][col][act] = load(get_offset(row, col, act));
+  // if(q_table[row][col][act] - res > 0.0001) {
+  //   ee_printf("a");
+  // }
   #else
   float past = (1 - learnRate) * q_table[row][col][act];
   float future = learnRate * (getReward(row, col, act) +
                               discount * getNextMaxQ(row, col, act));
   q_table[row][col][act] = past + future;
+  // if((past + future) - res > 0.0002) {
+  //   ee_printf("Different!\n\n");
+  //   uart_send_float(past+future, 5);
+  //   ee_printf(" != ");
+  //   uart_send_float(res, 5);
+  //   ee_printf("\n\n");
+  // }
   #endif
 }
 
@@ -89,7 +107,7 @@ void initializeQTable() {
       unsigned int offset = (i * maze_dimension + j);
       for (int k = 0; k < action_length; k++) {
         #ifdef use_accelerator
-        storeQValue(0, offset);
+        storeQValue(0, get_offset(i, j, k));
         #else
         q_table[i][j][k] = 0;
         #endif
@@ -104,6 +122,7 @@ void train() {
   setConstant(CONSTANT_TYPE_DISCOUNT_FACTOR, discount);
   setConstant(CONSTANT_TYPE_LEARNING_RATE, learnRate);
   #endif
+  startTimer();
   int episode_count = n_episode;
   for (int episode = 0; episode < episode_count; ++episode) {
     cumulative_rewards[episode] = 0;
@@ -118,9 +137,9 @@ void train() {
       } else {
         chosen_action = getBestAction(row, col);
       }
-      bool win = (row == desired_row && col == desired_col);
-      float reward = getReward(row, col, chosen_action);
-      cumulative_rewards[episode] += reward;
+    //   bool win = (row == desired_row && col == desired_col);
+    //   float reward = getReward(row, col, chosen_action);
+    //   cumulative_rewards[episode] += reward;
       updateQ(row, col, chosen_action);
       int prev_row = row, prev_col = col;
       bool indexValid = getIndexFromAction(&row, &col, chosen_action);
@@ -136,27 +155,37 @@ void train() {
     }
     saveQTableHistory(episode);
   }
-  #ifdef use_accelerator
+  endTimer();
+}
+
+void printQTable() {
   for (int i = 0; i < maze_dimension; i++) {
     for (int j = 0; j < maze_dimension; j++) {
       unsigned int offset = (i * maze_dimension + j);
+      ee_printf("[");
       for (int k = 0; k < action_length; k++) {
-        q_table[i][j][k] = load(get_offset(i, j, k));
+        uart_send_float(q_table[i][j][k],2);
+        if(k != action_length - 1)
+            ee_printf(",");
       }
+      ee_printf("] ");
     }
+    ee_printf("\n");
   }
-  #endif
+  ee_printf("\n\n");
 }
 
 // #define lookResult_print_maze true
 
 void lookResult() {
+  int idealSteps = fastestStep();
+  copyCacheToMaze();
   int row = 0, col = 0;
   int steps = 0;
   #ifdef lookResult_print_maze
   leaveTrace(row, col);
   #endif
-  while (row != desired_row || col != desired_col) {
+  while ((row != desired_row || col != desired_col) && steps <= (idealSteps+1)) {
     #ifdef lookResult_print_maze
     printMaze();
     #endif
@@ -174,5 +203,9 @@ void lookResult() {
   #ifdef lookResult_print_maze
   printMaze();
   #endif
-  ee_printf("Total by RL: %d steps\n", steps);
+  if(steps == idealSteps) {
+    ee_printf("Total by RL: %d steps\n", steps);
+  } else {
+    ee_printf("Diverge!\n");
+  }
 }

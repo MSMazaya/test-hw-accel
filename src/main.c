@@ -17,13 +17,39 @@ int main() {
   initMaze();
   generateMaze();
   copyMazeToCache();
+  // startTimer();
+  initializeQTable();
   train();
+  // endTimer();
+  // updateQ(0, 0, 1);
   lookResult();
+  printTimerResult("sw");
   // ee_printf("Fastest step %d\n\n", fastestStep());
   // printMaze();
   // fastestStep();
+  printQTable();
   while (1);
 }
+
+// UNIT TEST Q Update
+// int main() {
+//   initPlatform();
+//   setConstant(CONSTANT_TYPE_LEARNING_RATE, 0.4);
+//   setConstant(CONSTANT_TYPE_DISCOUNT_FACTOR, 0.28);
+//   storeQValue(10.2, 0);
+//   storeQValue(6.2, 1);
+//   storeQValue(3.2, 6);
+//   storeQValue(12.0, 12);
+  
+//   setNextState(1);
+//   qUpdate(0, 2.5);
+
+//   setNextState(5);
+//   qUpdate(1, -0.8);
+ 
+//   setNextState(5);
+//   qUpdate(1, -0.8);
+// }
 
 // int main() {
 //   initPlatform();

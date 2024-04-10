@@ -1,18 +1,18 @@
 #include "utils.h"
 
 void uart_send_float(float num, int max_decimal_places) {
+    // Handle negative numbers
+    if (num < 0) {
+        uart_send_char('-');
+        num = -num;
+    }
+
     // Print integer part of the float
     int integer_part = (int)num;
     uart_send_char((char)(integer_part + '0'));
 
     // Print the decimal point
     uart_send_char('.');
-
-    // Handle negative numbers
-    if (num < 0) {
-        num = -num;
-        integer_part = -integer_part;
-    }
 
     // Print decimal part up to max_decimal_places
     float decimal_part = num - integer_part;

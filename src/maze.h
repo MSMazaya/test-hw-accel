@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "ee_printf.h"
 
-#define maze_dimension 5
+#define maze_dimension 10
 
 bool getIndexFromAction(int *row, int *col, int act);
 void initMaze();
@@ -16,6 +16,7 @@ void generateMaze();
 void printMaze();
 void copyMazeToCache();
 void copyCacheToMaze();
+void initializeQTable();
 void leaveTrace(int row, int col);
 int fastestStep();
 bool isTraced(int row, int col);
