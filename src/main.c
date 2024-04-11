@@ -40,15 +40,25 @@ int main() {
 //   storeQValue(6.2, 1);
 //   storeQValue(3.2, 6);
 //   storeQValue(12.0, 12);
-  
+
+//   float res = load(0);
+//   res = load(1);
+//   res = load(6);
+//   res = load(12);
+
 //   setNextState(1);
-//   qUpdate(0, 2.5);
+//   res = qUpdate(0, 2.5);
 
 //   setNextState(5);
-//   qUpdate(1, -0.8);
+//   res = qUpdate(1, -0.8);
  
 //   setNextState(5);
-//   qUpdate(1, -0.8);
+//   res = qUpdate(1, -0.8);
+
+//   res = load(0);
+//   res = load(1);
+//   res = load(6);
+//   res = load(12);
 // }
 
 // int main() {

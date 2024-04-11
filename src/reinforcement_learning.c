@@ -78,10 +78,10 @@ void updateQ(int row, int col, int act) {
   setNextState(get_offset(temp_row, temp_col, act));
 
   // somehow this fixes things (dead emoji)
-  load(get_offset(temp_row, temp_col, 0));
-  float res = qUpdate(get_offset(row, col, act), getReward(row, col, act));
+  // load(get_offset(temp_row, temp_col, 0));
+  q_table[row][col][act] = qUpdate(get_offset(row, col, act), getReward(row, col, act));
   // somehow this fixes things (dead emoji)
-  q_table[row][col][act] = load(get_offset(row, col, act));
+  //  = res;
   // if(q_table[row][col][act] - res > 0.0001) {
   //   ee_printf("a");
   // }
@@ -156,6 +156,15 @@ void train() {
     saveQTableHistory(episode);
   }
   endTimer();
+  // #if use_accelerator
+  // for (int i = 0; i < maze_dimension; i++) {
+  //   for (int j = 0; j < maze_dimension; j++) {
+  //     for (int k = 0; k < action_length; k++) {
+  //       q_table[i][j][k] = load(get_offset(i, j, k));
+  //     }
+  //   }
+  // }
+  // #endif
 }
 
 void printQTable() {

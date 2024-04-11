@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "ee_printf.h"
 
-#define maze_dimension 10
+#define maze_dimension 4    
 
 bool getIndexFromAction(int *row, int *col, int act);
 void initMaze();
