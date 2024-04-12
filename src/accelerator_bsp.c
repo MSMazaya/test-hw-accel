@@ -99,8 +99,13 @@ unsigned int loadUnsignedInt(unsigned int address) {
 }
 
 
-unsigned int getMax() {
+unsigned int getMax(unsigned int address) {
   unsigned int result;
+
+  asm volatile("lw t3, %0;" : "=m"(address));
+  asm volatile("li t4, 0x0;"); // for now this is unused
+
+  FOUR_NOPS;
 
   asm volatile(".word 0x11ce8f53");
 

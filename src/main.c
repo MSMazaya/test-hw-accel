@@ -31,6 +31,55 @@ int main() {
   while (1);
 }
 
+// UNIT TEST Q MAX
+// int main() {
+//   storeQValue(10.2, 0);
+//   storeQValue(6.2, 1);
+//   storeQValue(3.2, 6);
+//   storeQValue(12.0, 12);
+
+//   getMax(0);
+//   getMax(4);
+//   getMax(8);
+//   getMax(12);
+// }
+
+// UNIT TEST Q QUEUE
+// int main() {
+//   // initPlatform();
+//   setConstant(CONSTANT_TYPE_LEARNING_RATE, 0.4);
+//   setConstant(CONSTANT_TYPE_DISCOUNT_FACTOR, 0.28);
+//   storeQValue(10.2, 0);
+//   storeQValue(6.2, 1);
+//   storeQValue(3.2, 6);
+//   storeQValue(12.0, 12);
+
+//   load(0);
+
+//   setNextState(1);
+//   qUpdate(0, 2.5);
+
+//   FOUR_NOPS;
+//   FOUR_NOPS;
+//   FOUR_NOPS;
+//   FOUR_NOPS;
+//   FOUR_NOPS;
+//   FOUR_NOPS;
+//   FOUR_NOPS;
+//   FOUR_NOPS;
+//   FOUR_NOPS;
+//   FOUR_NOPS;
+//   FOUR_NOPS;
+//   FOUR_NOPS;
+//   FOUR_NOPS;
+//   FOUR_NOPS;
+//   FOUR_NOPS;
+//   FOUR_NOPS;
+//   FOUR_NOPS;
+
+//   load(0);
+// }
+
 // UNIT TEST Q Update
 // int main() {
 //   initPlatform();

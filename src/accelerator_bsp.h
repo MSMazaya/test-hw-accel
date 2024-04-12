@@ -14,4 +14,4 @@ float storeQValue(float value, unsigned int address);
 float storeUnsignedInt(unsigned int value, unsigned int address);
 float load(unsigned int address);
 unsigned int loadUnsignedInt(unsigned int address);
-unsigned int getMax();
+unsigned int getMax(unsigned int address);

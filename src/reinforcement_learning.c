@@ -29,6 +29,9 @@ void saveQTableHistory(int episode) {
 }
 
 int getBestAction(int row, int col) {
+  #if use_accelerator
+  return getMax(get_offset(row, col, 0));
+  #else
   int chosen_action = 0;
   float max_q = q_table[row][col][chosen_action];
   for (int i = 1; i < action_length; ++i) {
@@ -38,6 +41,7 @@ int getBestAction(int row, int col) {
     }
   }
   return chosen_action;
+  #endif
 }
 
 float getReward(int row, int col, int action) {
@@ -79,7 +83,8 @@ void updateQ(int row, int col, int act) {
 
   // somehow this fixes things (dead emoji)
   // load(get_offset(temp_row, temp_col, 0));
-  q_table[row][col][act] = qUpdate(get_offset(row, col, act), getReward(row, col, act));
+  // q_table[row][col][act] = qUpdate(get_offset(row, col, act), getReward(row, col, act));
+  qUpdate(get_offset(row, col, act), getReward(row, col, act));
   // somehow this fixes things (dead emoji)
   //  = res;
   // if(q_table[row][col][act] - res > 0.0001) {
@@ -118,11 +123,11 @@ void initializeQTable() {
 
 
 void train() {
+  startTimer();
   #ifdef use_accelerator
   setConstant(CONSTANT_TYPE_DISCOUNT_FACTOR, discount);
   setConstant(CONSTANT_TYPE_LEARNING_RATE, learnRate);
   #endif
-  startTimer();
   int episode_count = n_episode;
   for (int episode = 0; episode < episode_count; ++episode) {
     cumulative_rewards[episode] = 0;
@@ -155,16 +160,16 @@ void train() {
     }
     saveQTableHistory(episode);
   }
+  #if use_accelerator
+  for (int i = 0; i < maze_dimension; i++) {
+    for (int j = 0; j < maze_dimension; j++) {
+      for (int k = 0; k < action_length; k++) {
+        q_table[i][j][k] = load(get_offset(i, j, k));
+      }
+    }
+  }
+  #endif
   endTimer();
-  // #if use_accelerator
-  // for (int i = 0; i < maze_dimension; i++) {
-  //   for (int j = 0; j < maze_dimension; j++) {
-  //     for (int k = 0; k < action_length; k++) {
-  //       q_table[i][j][k] = load(get_offset(i, j, k));
-  //     }
-  //   }
-  // }
-  // #endif
 }
 
 void printQTable() {
